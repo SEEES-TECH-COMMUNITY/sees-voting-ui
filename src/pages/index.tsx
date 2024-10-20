@@ -1,115 +1,54 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+import { Input } from "@src/components/ui/input";
+import Loading from "@src/components/ui/loading";
+import VoteCard from "@src/components/ui/votecard";
+import { useGetAllCandidatesQuery } from "@src/utils/services/ApiConnection";
+import { useEffect, useMemo } from "react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { useDebounceValue } from "usehooks-ts";
 
 export default function Home() {
-  return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const { data, isSuccess, isLoading } = useGetAllCandidatesQuery(undefined);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    const [search, setSearch] = useDebounceValue("", 500);
+    const filteredData = useMemo(
+        () =>
+            data?.filter(
+                (candidate) =>
+                    candidate.full_name.toLowerCase().includes(search.toLowerCase()) ||
+                    candidate.position.toLowerCase().includes(search.toLowerCase()) ||
+                    candidate.level.toLowerCase().includes(search.toLowerCase())
+            ),
+        [data, search]
+    );
+
+    return (
+        <main className="flex min-h-screen flex-col bg-primary-375/10 p-6 space-y-4">
+            <h1 className="text-5xl font-extrabold tracking-tight text-secondary sm:text-[5rem] text-center py-2">
+                SEEES <span className="text-primary">ELECTION</span> 2022/2023
+            </h1>
+            <div>
+                <Input
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search For nominee"
+                    className="w-full"
+                />
+            </div>
+            <div className="grid md:grid-cols-3 grid-cols-1 justify-between gap-8 w-full pt-4">
+                {isLoading
+                    ? [1, 2, 4, 5, 7, 8].map((val, i) => (
+                        <Loading key={`${val}-val-${i}-${val}`} />
+                    ))
+                    : (filteredData?.length ?? 0) > 0
+                        ? filteredData?.map((candidate) => (
+                            <VoteCard candidate={candidate} key={candidate.id} />
+                        ))
+                        : null}
+            </div>
+            {data && !isLoading && isSuccess && (filteredData?.length ?? 0) < 1 && (
+                <p className="text-center font-medium w-full">No Candidates Found</p>
+            )}
+        </main>
+    );
 }
