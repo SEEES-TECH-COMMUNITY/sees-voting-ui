@@ -31,7 +31,7 @@ export default function Home() {
                     type="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search For nominee"
+                    placeholder="Search For candidate"
                     className="w-full"
                 />
             </div>
