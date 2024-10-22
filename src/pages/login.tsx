@@ -19,35 +19,6 @@ const geistMono = localFont({
 // const XLSX = require('xlsx');
 
 // Function to handle the file input in a browser
-function handleFile(e: any) {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = function (event) {
-    const data = new Uint8Array(event.target?.result as any);
-    const workbook = XLSX.read(data, { type: 'array' });
-
-    // Load the first sheet
-    const firstSheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[firstSheetName];
-
-    // Convert sheet to JSON
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any;
-
-    // Extract column 2 and 3
-    const extractedData = jsonData.filter((val: any[]) => !!val[1] && !!val[2]).map((row: any[]) => [(row[1])?.replace?.(" (Miss)","")?.trim?.(), row[2]]).map((val) => ({
-      full_name: val[0],
-      mat_number: val[1],
-      level: "300"
-    }))
-
-    // Log or use the extracted data
-    console.log(JSON.stringify(extractedData));
-  };
-
-  reader.readAsArrayBuffer(file);
-}
-
 // HTML input element to upload the Excel file
 // <input type="file" id="fileInput" onchange="handleFile(event)" />
 
