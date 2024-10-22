@@ -4,11 +4,11 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
-export interface IAuthProviderProps {}
 
-const AuthProvider: React.FC<IAuthProviderProps> = (props) => {
+
+const AuthProvider: React.FC = (props) => {
   const { status, data } = useSession();
-  const { pathname, asPath, push, query } = useRouter();
+  const { pathname, asPath, push } = useRouter();
   React.useEffect(() => {
     const unProtectedRoutes = ["/login"];
     if (
