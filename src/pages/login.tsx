@@ -73,7 +73,7 @@ export default function Home() {
         <Google className="w-6 h-auto" />
         <span>Login with Google</span>
       </button>
-      <input type="file" id="fileInput" onChange={handleFile} />
+
     </div>
   );
 }
