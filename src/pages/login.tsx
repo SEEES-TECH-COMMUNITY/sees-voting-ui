@@ -35,7 +35,11 @@ function handleFile(e: any) {
     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any;
 
     // Extract column 2 and 3
-    const extractedData = jsonData.map((row: any[]) => [row[1], row[2]]); // row[1] -> Names, row[2] -> Mat. No
+    const extractedData = jsonData.filter((val: any[]) => !!val[1] && !!val[2]).map((row: any[]) => [(row[1])?.replace?.(" (Miss)","")?.trim?.(), row[2]]).map((val) => ({
+      full_name: val[0],
+      mat_number: val[1],
+      level: "300"
+    }))
 
     // Log or use the extracted data
     console.log(JSON.stringify(extractedData));
@@ -87,17 +91,16 @@ export default function Home() {
     <div
       className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex items-center justify-center`}
     >
+      
       <button
         className="flex space-x-3 w-fit bg-white border-grey-375 border text-grey-650 hover:bg-grey-125 data-[state=active]:bg-grey-125 data-true:bg-grey-125 px-4 py-3 rounded-full"
         type="button"
-        onClick={() => signIn("google", {
-          callbackUrl: "/"
-        })}
+        onClick={() => signIn()}
       >
         <Google className="w-6 h-auto" />
         <span>Login with Google</span>
       </button>
-
+      <input type="file" id="fileInput" onChange={handleFile} />
     </div>
   );
 }
