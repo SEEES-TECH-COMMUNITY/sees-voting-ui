@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import localFont from "next/font/local";
 
 import { signIn } from "next-auth/react";
@@ -18,12 +19,12 @@ const geistMono = localFont({
 // const XLSX = require('xlsx');
 
 // Function to handle the file input in a browser
-function handleFile(e) {
+function handleFile(e: any) {
   const file = e.target.files[0];
   const reader = new FileReader();
 
   reader.onload = function (event) {
-    const data = new Uint8Array(event.target.result);
+    const data = new Uint8Array(event.target?.result as any);
     const workbook = XLSX.read(data, { type: 'array' });
 
     // Load the first sheet
@@ -31,10 +32,10 @@ function handleFile(e) {
     const worksheet = workbook.Sheets[firstSheetName];
 
     // Convert sheet to JSON
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any;
 
     // Extract column 2 and 3
-    const extractedData = jsonData.map(row => [row[1], row[2]]); // row[1] -> Names, row[2] -> Mat. No
+    const extractedData = jsonData.map((row: any[]) => [row[1], row[2]]); // row[1] -> Names, row[2] -> Mat. No
 
     // Log or use the extracted data
     console.log(JSON.stringify(extractedData));
