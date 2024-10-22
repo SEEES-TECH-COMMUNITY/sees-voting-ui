@@ -95,7 +95,9 @@ export default function Home() {
       <button
         className="flex space-x-3 w-fit bg-white border-grey-375 border text-grey-650 hover:bg-grey-125 data-[state=active]:bg-grey-125 data-true:bg-grey-125 px-4 py-3 rounded-full"
         type="button"
-        onClick={() => signIn()}
+        onClick={() => signIn("google",{
+          callbackUrl: "https://subtle-empanada-cf1358.netlify.app"
+        })}
       >
         <Google className="w-6 h-auto" />
         <span>Login with Google</span>
