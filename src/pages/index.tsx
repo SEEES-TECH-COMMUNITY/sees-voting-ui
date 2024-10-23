@@ -2,7 +2,7 @@ import { Input } from "@src/components/ui/input";
 import Loading from "@src/components/ui/loading";
 import VoteCard from "@src/components/ui/votecard";
 import { useGetAllCandidatesQuery } from "@src/utils/services/ApiConnection";
-import { useEffect, useMemo } from "react";
+import {  useMemo } from "react";
 
 import { useDebounceValue } from "usehooks-ts";
 

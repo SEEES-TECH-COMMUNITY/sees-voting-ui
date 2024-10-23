@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import localFont from "next/font/local";
 
 import { signIn } from "next-auth/react";
-import * as XLSX from 'xlsx';
+
 
 
 const geistSans = localFont({
@@ -15,12 +14,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-// If using Node.js, require the library
-// const XLSX = require('xlsx');
-
-// Function to handle the file input in a browser
-// HTML input element to upload the Excel file
-// <input type="file" id="fileInput" onchange="handleFile(event)" />
 
 
 interface IGoogle extends React.SVGAttributes<SVGElement> {
