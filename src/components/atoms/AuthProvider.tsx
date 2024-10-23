@@ -6,7 +6,7 @@ import * as React from "react";
 
 
 
-const AuthProvider: React.FC = (props) => {
+const AuthProvider: React.FC = () => {
   const { status, data } = useSession();
   const { pathname, asPath, push } = useRouter();
   React.useEffect(() => {
