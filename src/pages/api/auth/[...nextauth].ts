@@ -49,7 +49,7 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
         if (!responseJson?.success) {
           return `/?error=${
             responseJson.message ||
-            "You are not authorized to login on this platform"
+            "You are not authorized to login on this platform ensure you sign In with your student email"
           }`;
         }
         const cookies = response.headers.getSetCookie();

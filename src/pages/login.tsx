@@ -1,6 +1,10 @@
 import localFont from "next/font/local";
 
 import { signIn } from "next-auth/react";
+import { error } from "console";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { useToast } from "@src/components/ui/use-toast";
 
 
 
@@ -50,7 +54,17 @@ const Google: React.FC<IGoogle> = (props) => {
 
 
 export default function Home() {
-
+  const { query, push } = useRouter();
+  const toast = useToast()
+  React.useEffect(() => {
+    if (query.error) {
+      toast.toast({
+        title: "Error",
+        description: query.error || "An error occurred",
+        variant: "destructive",
+      })
+    }
+  }, [query.error]);
   return (
     <div
       className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex items-center justify-center`}
