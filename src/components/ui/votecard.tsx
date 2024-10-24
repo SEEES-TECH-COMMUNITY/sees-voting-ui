@@ -22,7 +22,7 @@ const VoteCard: FC<{
     const toast = useToast()
     const handleVote = async () => {
         try {
-            const data = await voteCandidate(candidate.id).unwrap()
+            await voteCandidate(candidate.id).unwrap()
             toast.toast({
                 title: "Success",
                 description: "You have successfully voted",
