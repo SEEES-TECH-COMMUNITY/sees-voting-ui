@@ -17,10 +17,11 @@ import { useToast } from "./use-toast";
 const VoteCard: FC<{
     candidate: ICandidate;
 }> = ({ candidate }) => {
-    const [voteCandidate, { data }] = useVoteCandidateMutation()
+    const [voteCandidate, { data, isLoading }] = useVoteCandidateMutation()
     console.log(data)
     const toast = useToast()
     const handleVote = async () => {
+        if (isLoading) return
         try {
             await voteCandidate(candidate.id).unwrap()
             toast.toast({
@@ -56,7 +57,7 @@ const VoteCard: FC<{
                 <CardDescription>Level: {candidate.level}</CardDescription>
             </CardContent>
             <CardFooter>
-                <Button className="w-full" onClick={handleVote}>Vote</Button>
+                <Button className="w-full" onClick={handleVote}>{isLoading ? "Voting..." : "Vote"}</Button>
             </CardFooter>
         </Card>
     );
