@@ -38,20 +38,20 @@ const VoteCard: FC<{
         }
     }
     return (
-        <Card key={candidate.id} className={cn("md:w-[380px] w-full")}>
+        <Card key={candidate.id} className={cn(" w-full")}>
             <CardHeader>
                 <Image
                     src={candidate.image}
                     alt={candidate.full_name}
-                    width={500}
-                    height={500}
-                    className="w-full h-auto"
+                    width={750}
+                    height={1000}
+                    className="w-full h-auto aspect-square object-contain"
                 />
                 <CardTitle>{candidate.full_name}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-4">
                 <CardDescription className="capitalize">
-                    Position: {candidate.position.replace("_", " ")}
+                    Position: {candidate.position.replaceAll("_", " ")}
                 </CardDescription>
                 <CardDescription>Level: {candidate.level}</CardDescription>
             </CardContent>

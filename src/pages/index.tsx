@@ -2,13 +2,13 @@ import { Input } from "@src/components/ui/input";
 import Loading from "@src/components/ui/loading";
 import VoteCard from "@src/components/ui/votecard";
 import { useGetAllCandidatesQuery } from "@src/utils/services/ApiConnection";
-import {  useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { useDebounceValue } from "usehooks-ts";
 
 export default function Home() {
     const { data, isSuccess, isLoading } = useGetAllCandidatesQuery(undefined);
-
+    const [rawSearch, setRawSearch] = useState("");
     const [search, setSearch] = useDebounceValue("", 500);
     const filteredData = useMemo(
         () =>
@@ -24,13 +24,16 @@ export default function Home() {
     return (
         <main className="flex min-h-screen flex-col bg-primary-375/10 p-6 space-y-4">
             <h1 className="text-5xl font-extrabold tracking-tight text-secondary sm:text-[5rem] text-center py-2">
-                SEEES <span className="text-primary">ELECTION</span> 2022/2023
+                SEEES <span className="text-primary">ELECTION</span> 2023/2024
             </h1>
             <div>
                 <Input
                     type="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={rawSearch}
+                    onChange={(e) => {
+                        setSearch(e.target.value)
+                        setRawSearch(e.target.value)
+                    }}
                     placeholder="Search For candidate"
                     className="w-full"
                 />
