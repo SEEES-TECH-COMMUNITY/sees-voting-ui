@@ -50,7 +50,6 @@ const VoteCard: FC<{
                 <CardTitle>{candidate.full_name}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col space-y-4">
-                <CardDescription>Manifesto: {candidate.manifesto}</CardDescription>
                 <CardDescription className="capitalize">
                     Position: {candidate.position.replace("_", " ")}
                 </CardDescription>
