@@ -35,6 +35,7 @@ const VoteCard: FC<{
                 title: "Error",
                 description: error?.data?.message || "An error occurred",
                 variant: "destructive",
+                duration: 2000
             })
         }
     }
