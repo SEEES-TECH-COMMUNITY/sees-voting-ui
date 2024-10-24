@@ -8,23 +8,15 @@ import * as React from "react";
 
 const AuthProvider: React.FC = () => {
   const { status, data } = useSession();
-  const { pathname, asPath, push } = useRouter();
+  const { pathname, push } = useRouter();
   React.useEffect(() => {
     const unProtectedRoutes = ["/login"];
     if (
       status === "unauthenticated" ||
       (status === "authenticated" && !data.id)
-      || data?.statusCode === 500
     ) {
       if (!unProtectedRoutes.includes(pathname)) {
-        push({
-          pathname: "/login",
-          query: {
-            redirect: asPath,
-            error:
-              "Your session has expired you need to login again to access this page",
-          },
-        });
+        push("/login");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
