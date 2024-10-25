@@ -57,7 +57,7 @@ export default function Home() {
   const { query, push } = useRouter();
   const toast = useToast()
   React.useEffect(() => {
-    if (query.error) {
+    if (query.error && query.error !== "undefined") {
       toast.toast({
         title: "Error",
         description: query.error || "An error occurred",
