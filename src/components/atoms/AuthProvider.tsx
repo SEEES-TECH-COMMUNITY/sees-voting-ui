@@ -10,7 +10,7 @@ const AuthProvider: React.FC = () => {
   const { status, data } = useSession();
   const { pathname, push } = useRouter();
   const unProtectedRoutes = ["/login", "/admin/result"];
-  console.log({ pathname })
+
   React.useEffect(() => {
     if (
       status === "unauthenticated" ||
