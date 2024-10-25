@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getToken } from "../function/storage";
-import image from "next/image";
 
 const ApiHeaders = {
   Accept: "application/json",
@@ -20,16 +19,14 @@ export enum Position {
 }
 export interface ICandidate {
   id: string;
-
   full_name: string;
-
   position: Position;
-
   manifesto: string;
-
   image: string;
-
   level: string;
+}
+export interface IResults extends ICandidate {
+  voteCount: number;
 }
 export type ICandidates = Array<ICandidate>;
 const prepareHeaders = (headers: Headers) => {
@@ -51,8 +48,20 @@ const connectedAwardsApi = createApi({
         createRequest(`/vote/cast/${candidateId}`, "POST"),
       invalidatesTags: ["Post"],
     }),
+    getResult: builder.mutation({
+      query: () =>
+        createRequest(
+          `/candidate/${process.env.NEXT_PUBLIC_RESULT_PATH}`,
+          "GET"
+        ),
+      transformResponse: (response: Array<IResults>) => response,
+      invalidatesTags: ["Post"],
+    }),
   }),
 });
-export const { useGetAllCandidatesQuery, useVoteCandidateMutation } =
-  connectedAwardsApi;
+export const {
+  useGetAllCandidatesQuery,
+  useVoteCandidateMutation,
+  useGetResultMutation,
+} = connectedAwardsApi;
 export default connectedAwardsApi;

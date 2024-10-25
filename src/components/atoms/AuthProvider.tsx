@@ -9,8 +9,9 @@ import * as React from "react";
 const AuthProvider: React.FC = () => {
   const { status, data } = useSession();
   const { pathname, push } = useRouter();
+  const unProtectedRoutes = ["/login", "/admin/result"];
+  console.log({ pathname })
   React.useEffect(() => {
-    const unProtectedRoutes = ["/login"];
     if (
       status === "unauthenticated" ||
       (status === "authenticated" && !data.id)
