@@ -1,7 +1,7 @@
-import { signIn } from "next-auth/react";
+
 import { useRouter } from "next/router";
 import React from "react";
-import { useToast } from "@src/components/ui/use-toast";
+
 import { useGetResultMutation } from "@src/utils/services/ApiConnection";
 import Loading from "@src/components/ui/loading";
 import ResultCard from "@src/components/ui/resultcard";
@@ -13,10 +13,12 @@ export default function Home() {
   const { query, push } = useRouter();
   const [getResults, { data, isLoading }] = useGetResultMutation()
   React.useEffect(() => {
+    console.log(query.security_key, process.env.NEXT_PUBLIC_SECURITY_KEY)
+    if (!query.security_key) return
     if (query.security_key === process.env.NEXT_PUBLIC_SECURITY_KEY) {
       getResults(undefined)
     } else {
-       push("/login")
+      push("/login")
     }
   }, [query.security_key]);
   return (
