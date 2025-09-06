@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config();
 type NextAuthOptionsCallback = (
@@ -20,62 +21,38 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
           },
         },
       }),
+      CredentialsProvider({
+        id: "auth-credentials",
+        credentials: {
+          "mat-number": { label: "Mat Number", type: "text" },
+          password: { label: "Password", type: "password" },
+          fingerprint: { label: "Fingerprint", type: "text" },
+        },
+        async authorize(credentials, req) {
+          console.log({ credentials });
+          // Add logic here to look up the user from the credentials supplied
+          const user = {
+            id: "1",
+            name: "J Smith",
+            email: "jsmith@example.com",
+          };
+
+          if (user) {
+            // Any object returned will be saved in `user` property of the JWT
+            return user;
+          } else {
+            // If you return null then an error will be displayed advising the user to check their details.
+            return null;
+
+            // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          }
+        },
+      }),
     ],
     secret: process.env.SECRET,
     pages: {
       signIn: "/login",
       error: "/login",
-    },
-    callbacks: {
-      signIn: async (user) => {
-        // return false;
-        // this only runs when i call signIn on the client side
-        if (!user.account?.id_token) {
-          return "/login?error=You are not authorized to login on this platform";
-        }
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/google/login`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              token: user.account?.id_token,
-            }),
-          }
-        );
-        const responseJson = await response.json();
-        if (!responseJson?.success) {
-          return `/?error=${
-            responseJson.message ||
-            "You are not authorized to login on this platform ensure you sign In with your student email"
-          }`;
-        }
-        const cookies = response.headers.getSetCookie();
-        res.setHeader("Set-Cookie", cookies);
-        return responseJson?.success ?? false;
-      },
-      async jwt({ token, account }) {
-        return { ...token, token: account?.id_token || token?.token };
-      },
-      async session(session) {
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        headers.set("Authorization", `Bearer ${session?.token?.token}`);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/v1/students/me`,
-          {
-            headers,
-          }
-        );
-        const responseJson = await response.json();
-        console.log(responseJson);
-        return {
-          ...responseJson,
-          token: session?.token?.token,
-        };
-      },
     },
   };
 };
