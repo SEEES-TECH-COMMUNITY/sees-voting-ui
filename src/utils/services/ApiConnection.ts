@@ -35,7 +35,11 @@ const prepareHeaders = (headers: Headers) => {
 };
 const connectedAwardsApi = createApi({
   reducerPath: "votingApi",
-  baseQuery: fetchBaseQuery({ baseUrl, prepareHeaders }),
+  baseQuery: fetchBaseQuery({
+    baseUrl,
+    prepareHeaders,
+    credentials: "include",
+  }),
   tagTypes: ["Post", "Get"],
   endpoints: (builder) => ({
     getAllCandidates: builder.query({
