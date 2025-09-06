@@ -1,12 +1,18 @@
 import localFont from "next/font/local";
+import z from "zod";
+import FingerprintJS from "@fingerprintjs/fingerprintjs-pro";
 
 import { signIn } from "next-auth/react";
-import { error } from "console";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { useToast } from "@src/components/ui/use-toast";
 
+import { Label } from "@src/components/ui/Label";
+import { PasswordInput } from "@src/components/ui/PasswordInput";
+import { AltInput } from "@src/components/ui/AltInput";
+import Logo from "@src/components/icon/Logo.icon";
 
+import { VariantButton } from "@src/components/ui/button-with-variant";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,68 +25,131 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-
-interface IGoogle extends React.SVGAttributes<SVGElement> {
-  className?: string;
-}
-
-const Google: React.FC<IGoogle> = (props) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      viewBox="0 0 26 26"
-      fill="none"
-    >
-      <path
-        d="M23.6226 10.8786H22.75V10.8337H13V15.167H19.1224C18.2292 17.6895 15.8291 19.5003 13 19.5003C9.41033 19.5003 6.49996 16.5899 6.49996 13.0003C6.49996 9.4107 9.41033 6.50033 13 6.50033C14.6569 6.50033 16.1644 7.12541 17.3122 8.14645L20.3764 5.08224C18.4415 3.27903 15.8535 2.16699 13 2.16699C7.01725 2.16699 2.16663 7.01762 2.16663 13.0003C2.16663 18.983 7.01725 23.8337 13 23.8337C18.9827 23.8337 23.8333 18.983 23.8333 13.0003C23.8333 12.2739 23.7585 11.5649 23.6226 10.8786Z"
-        fill="#FFC107"
-      />
-      <path
-        d="M3.41577 7.95795L6.97506 10.5682C7.93815 8.18383 10.2706 6.50033 13 6.50033C14.657 6.50033 16.1644 7.12541 17.3122 8.14645L20.3764 5.08224C18.4416 3.27903 15.8535 2.16699 13 2.16699C8.83894 2.16699 5.23035 4.5162 3.41577 7.95795Z"
-        fill="#FF3D00"
-      />
-      <path
-        d="M13 23.8337C15.7982 23.8337 18.3408 22.7628 20.2632 21.0214L16.9103 18.1841C15.7861 19.0391 14.4123 19.5015 13 19.5004C10.1822 19.5004 7.78967 17.7037 6.88834 15.1963L3.35559 17.9182C5.14851 21.4265 8.78959 23.8337 13 23.8337Z"
-        fill="#4CAF50"
-      />
-      <path
-        d="M23.6226 10.878H22.75V10.833H13V15.1663H19.1225C18.6952 16.3669 17.9256 17.416 16.9087 18.184L16.9103 18.1829L20.2632 21.0201C20.026 21.2357 23.8333 18.4163 23.8333 12.9997C23.8333 12.2733 23.7586 11.5643 23.6226 10.878Z"
-        fill="#1976D2"
-      />
-    </svg>
-  );
-};
-
-
 export default function Home() {
-  const { query, push } = useRouter();
-  const toast = useToast()
+  const { query } = useRouter();
+  const toast = useToast();
+  const [formFilled, setFormFilled] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  console.log({ isLoading, error });
+  const [formValues, setFormValues] = React.useState({
+    "mat-number": "",
+    password: "",
+  });
+  const inputSchema = z.object({
+    "mat-number": z.string().min(8),
+    password: z.string().min(8),
+  });
+  React.useEffect(() => {
+    try {
+      inputSchema.parse(formValues);
+      setFormFilled(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      setFormFilled(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formValues]);
   React.useEffect(() => {
     if (query.error && query.error !== "undefined") {
       toast.toast({
         title: "Error",
         description: query.error || "An error occurred",
         variant: "destructive",
-      })
+      });
     }
   }, [query.error]);
+
+  React.useEffect(() => {
+    // Get the visitorId when you need it.
+  }, []);
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // signIn("auth-credentials", {});
+    // setError(true);
+  };
+  const handleClick = async (e) => {
+    e.preventDefault();
+    const fpPromise = FingerprintJS.load({
+      apiKey: "2gjKwmDkg5er65lGEHYf",
+      region: "eu",
+    });
+
+    // Get the visitorId when you need it.
+    const visitor = await fpPromise.then((fp) => fp.get());
+    console.log(visitor);
+    signIn("auth-credentials", {
+      "mat-number": formValues["mat-number"],
+      password: formValues.password,
+      fingerprint: visitor.visitorId,
+      redirect: false,
+    })
+      .then(console.log)
+      .catch(console.error);
+  };
   return (
     <div
-      className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex items-center justify-center`}
+      className={`${geistSans.variable} ${geistMono.variable} grid place-content-center min-h-screen w-full`}
     >
-      
-      <button
-        className="flex space-x-3 w-fit bg-white border-grey-375 border text-grey-650 hover:bg-grey-125 data-[state=active]:bg-grey-125 data-true:bg-grey-125 px-4 py-3 rounded-full"
-        type="button"
-        onClick={() => signIn("google",{
-          callbackUrl: "/"
-        })}
+      <form
+        onSubmit={handleSubmit}
+        className="h-fit flex flex-col items-center"
       >
-        <Google className="w-6 h-auto" />
-        <span>Login with Google</span>
-      </button>
-
+        <Logo className="h-6 w-auto" />
+        <div className="text-center mt-6 flex flex-col space-y-3">
+          <h1 className="text-3xl font-semibold">Sign in to Vote</h1>
+          <p className="text-grey-550 text-base max-w-80">
+            Access your account to participate in the voting process. Your voice
+            matters!
+          </p>
+        </div>
+        <div className="w-full space-y-6">
+          <div className="flex flex-col w-full space-y-4 mt-8">
+            <div className="flex flex-col space-y-2 w-full">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="email">Mat Number</Label>
+              </div>
+              <AltInput
+                type="text"
+                placeholder="Enter your Mat Number"
+                id="mat-number"
+                name="mat-number"
+                value={formValues["mat-number"]}
+                onChange={handleFormChange}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="password">Password</Label>
+              </div>
+              <PasswordInput
+                type="password"
+                placeholder="Password"
+                id="password"
+                name="password"
+                value={formValues.password}
+                onChange={handleFormChange}
+              />
+            </div>
+          </div>
+          <VariantButton
+            variant={"default"}
+            className="w-full"
+            disabled={!formFilled}
+            onClick={handleClick}
+            type="submit"
+          >
+            Sign in
+          </VariantButton>
+        </div>
+      </form>
     </div>
   );
 }
