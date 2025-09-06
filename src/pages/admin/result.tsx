@@ -6,12 +6,9 @@ import Loading from "@src/components/ui/loading";
 import ResultCard from "@src/components/ui/resultcard";
 import { NextPage } from "next";
 
-
-const Home: NextPage<
-  {
-    security_key?: string;
-  }
-> = ({ security_key }) => {
+const Home: NextPage<{
+  security_key?: string;
+}> = ({ security_key }) => {
   const { push } = useRouter();
   const [getResults, { data, isLoading }] = useGetResultMutation();
   React.useEffect(() => {
@@ -21,7 +18,7 @@ const Home: NextPage<
     } else {
       push("/login");
     }
-  }, [security_key]);
+  }, [getResults, push, security_key]);
   return (
     <div
       className={`min-h-screen flex items-center justify-center p-6 space-y-4`}
@@ -29,11 +26,11 @@ const Home: NextPage<
       <div className="grid md:grid-cols-3 grid-cols-1 justify-between gap-8 w-full pt-4">
         {isLoading
           ? [1, 2, 4, 5, 7, 8].map((val, i) => (
-            <Loading key={`${val}-val-${i}-${val}`} />
-          ))
+              <Loading key={`${val}-val-${i}-${val}`} />
+            ))
           : data?.map((candidate) => (
-            <ResultCard candidate={candidate} key={candidate.id} />
-          ))}
+              <ResultCard candidate={candidate} key={candidate.id} />
+            ))}
       </div>
     </div>
   );
