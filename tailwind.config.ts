@@ -12,9 +12,11 @@ const config: Config = {
         grey: {
           800: "#AAA",
           700: "#A7B5C1",
-          650: "#6D6D6D",
+          650: "#344054",
           600: "#F3F3F3",
+          500: "#697586",
           400: "#FBFBFB",
+          75: "#F9FAFB",
         },
         dark: {
           900: "#000F1E",
@@ -22,6 +24,7 @@ const config: Config = {
         blue: {
           600: "#1573FF",
           200: "#D8E7FF",
+          main: "#0C6AFF",
           placeholder: {
             600: "#002445",
           },
@@ -38,6 +41,9 @@ const config: Config = {
           800: "#F2A102",
           300: "#FFFACB",
         },
+      },
+      borderRadius: {
+        "2md": "0.5rem",
       },
     },
   },
