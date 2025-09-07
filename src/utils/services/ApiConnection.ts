@@ -4,7 +4,7 @@ import { getToken } from "../function/storage";
 const ApiHeaders = {
   Accept: "application/json",
 };
-const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/v1`;
+const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
 const createRequest = (
   url: string,
   method: "GET" | "POST"
