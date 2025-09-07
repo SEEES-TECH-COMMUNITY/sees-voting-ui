@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import localFont from "next/font/local";
 import z from "zod";
-import FingerprintJS from "@fingerprintjs/fingerprintjs-pro";
+import FingerprintJSPro from "@fingerprintjs/fingerprintjs-pro";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -26,12 +28,10 @@ const geistMono = localFont({
 });
 
 export default function Home() {
-  const { query } = useRouter();
+  const { push } = useRouter();
   const toast = useToast();
   const [formFilled, setFormFilled] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  console.log({ isLoading, error });
   const [formValues, setFormValues] = React.useState({
     "mat-number": "",
     password: "",
@@ -44,55 +44,57 @@ export default function Home() {
     try {
       inputSchema.parse(formValues);
       setFormFilled(true);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       setFormFilled(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues]);
-  React.useEffect(() => {
-    if (query.error && query.error !== "undefined") {
-      toast.toast({
-        title: "Error",
-        description: query.error || "An error occurred",
-        variant: "destructive",
-      });
-    }
-  }, [query.error]);
+  }, [formValues, inputSchema]);
 
-  React.useEffect(() => {
-    // Get the visitorId when you need it.
-  }, []);
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    let visitorId: string;
+    setIsLoading(true);
+    try {
+      const fpPromise = FingerprintJSPro.load({
+        apiKey: "2gjKwmDkg5er65lGEHYf",
+        region: "eu",
+      });
 
-    // signIn("auth-credentials", {});
-    // setError(true);
-  };
-  const handleClick = async (e) => {
-    e.preventDefault();
-    const fpPromise = FingerprintJS.load({
-      apiKey: "2gjKwmDkg5er65lGEHYf",
-      region: "eu",
-    });
-
-    // Get the visitorId when you need it.
-    const visitor = await fpPromise.then((fp) => fp.get());
-    console.log(visitor);
-    signIn("auth-credentials", {
+      visitorId = await fpPromise
+        .then((fp) => fp.get())
+        .then((result) => {
+          return result.visitorId;
+        });
+    } catch (error) {
+      const fpPromise = FingerprintJS.load();
+      visitorId = await fpPromise
+        .then((fp) => fp.get())
+        .then((result) => {
+          return result.visitorId;
+        });
+    }
+    const result = await signIn("auth-credentials", {
       "mat-number": formValues["mat-number"],
       password: formValues.password,
-      fingerprint: visitor.visitorId,
+      fingerprint: visitorId,
       redirect: false,
-    })
-      .then(console.log)
-      .catch(console.error);
+    });
+    console.log({ result });
+    if (result?.error) {
+      toast.toast({
+        title: "Error",
+        description: "Invalid Credentials",
+        variant: "destructive",
+      });
+    } else if (result?.ok) {
+      push("/");
+    }
+    setIsLoading(false);
   };
   return (
     <div
@@ -142,11 +144,10 @@ export default function Home() {
           <VariantButton
             variant={"default"}
             className="w-full"
-            disabled={!formFilled}
-            onClick={handleClick}
+            disabled={!formFilled || isLoading}
             type="submit"
           >
-            Sign in
+            {isLoading ? "Signing In..." : "Sign In"}
           </VariantButton>
         </div>
       </form>
