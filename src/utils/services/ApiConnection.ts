@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getToken } from "../function/storage";
 
 const ApiHeaders = {
   Accept: "application/json",
@@ -29,16 +28,12 @@ export interface IResults extends ICandidate {
   voteCount: number;
 }
 export type ICandidates = Array<ICandidate>;
-const prepareHeaders = (headers: Headers) => {
-  headers.set("Authorization", `Bearer ${getToken()}`);
-  return headers;
-};
 const connectedAwardsApi = createApi({
   reducerPath: "votingApi",
   baseQuery: fetchBaseQuery({
     baseUrl,
-    prepareHeaders,
     credentials: "include",
+    mode: "cors",
   }),
   tagTypes: ["Post", "Get"],
   endpoints: (builder) => ({
