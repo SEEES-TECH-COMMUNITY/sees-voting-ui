@@ -36,7 +36,6 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
             return null;
           }
           const cookies = response.headers.getSetCookie();
-          console.log(cookies);
           res.setHeader("Set-Cookie", cookies);
           return responseJson.success;
         },
