@@ -55,7 +55,6 @@ const VoteCard: FC<{
                 <CardDescription className="capitalize">
                     Position: {candidate.position.replaceAll("_", " ")}
                 </CardDescription>
-                <CardDescription>Level: {candidate.level}</CardDescription>
             </CardContent>
             <CardFooter>
                 <Button className="w-full" onClick={handleVote}>{isLoading ? "Voting..." : "Vote"}</Button>
