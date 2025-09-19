@@ -75,7 +75,9 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
     ],
     secret: process.env.SECRET,
     pages: {
-      signIn: "/login",
+      signIn: "/activate",
+      error: "/activate",
+      newUser: "/",
     },
     callbacks: {
       async session() {
