@@ -13,10 +13,10 @@ const AuthProvider: React.FC = () => {
       status === "unauthenticated" ||
       (status === "authenticated" && !data.id)
     ) {
-      if (!unProtectedRoutes.includes(pathname) && pathname === "/") {
+      if (!unProtectedRoutes.includes(pathname) && pathname === "/admin/result") {
         push("/login");
       }
-    } else if (status === "loading") {
+    } else if (status === "loading"  && pathname !== "") {
       push("/loading");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
