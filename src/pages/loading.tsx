@@ -29,54 +29,6 @@ const geistMono = localFont({
 });
 
 export default function Home() {
-  const { push, query, asPath } = useRouter();
-  const toast = useToast();
-
-  const handleSubmit = async (hash: string) => {
-    let visitorId: string;
-    try {
-      const fpPromise = FingerprintJSPro.load({
-        apiKey: "2gjKwmDkg5er65lGEHYf",
-        region: "eu",
-      });
-
-      visitorId = await fpPromise
-        .then((fp) => fp.get())
-        .then((result) => {
-          return result.visitorId;
-        });
-    } catch (error) {
-      const fpPromise = FingerprintJS.load();
-      visitorId = await fpPromise
-        .then((fp) => fp.get())
-        .then((result) => {
-          return result.visitorId;
-        });
-    }
-    const result = await signIn("hash-credentials", {
-      hash,
-      fingerprint: visitorId,
-      redirect: false,
-    });
-    console.log({ result });
-    if (result?.error) {
-      toast.toast({
-        title: "Error",
-        description: result?.error || "Invalid Credentials",
-        variant: "destructive",
-      });
-    } else if (result?.ok) {
-      push("/");
-    }
-  };
-  useEffect(() => {
-    const session = Array.isArray(query.session)
-      ? query.session[0]
-      : query.session;
-    if (session) {
-      handleSubmit(session);
-    }
-  }, [query.session]);
   return (
     <div
       className={`${geistSans.variable} ${geistMono.variable} grid place-content-center min-h-screen w-full`}
