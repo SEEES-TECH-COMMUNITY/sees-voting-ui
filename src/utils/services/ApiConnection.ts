@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const ApiHeaders = {
   Accept: "application/json",
 };
-const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
+const baseUrl = "/api/proxy";
 const createRequest = (
   url: string,
   method: "GET" | "POST"
