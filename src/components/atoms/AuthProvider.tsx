@@ -9,14 +9,18 @@ const AuthProvider: React.FC = () => {
   const unProtectedRoutes = ["/activate", "/login", "/admin/result"];
 
   React.useEffect(() => {
+    if (pathname === "/admin/result") return;
     if (
       status === "unauthenticated" ||
       (status === "authenticated" && !data.id)
     ) {
-      if (!unProtectedRoutes.includes(pathname) && pathname === "/admin/result") {
+      if (
+        !unProtectedRoutes.includes(pathname) &&
+        pathname === "/admin/result"
+      ) {
         push("/login");
       }
-    } else if (status === "loading"  && pathname !== "") {
+    } else if (status === "loading") {
       push("/loading");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
