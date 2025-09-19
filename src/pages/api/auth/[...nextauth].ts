@@ -33,7 +33,39 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
           );
           const responseJson = await response.json();
           if (!responseJson?.success) {
-            return null;
+            throw new Error(
+              "Invalid credentials. Please check your Mat Number, Password, and Fingerprint."
+            );
+          }
+          const cookies = response.headers.getSetCookie();
+          res.setHeader("Set-Cookie", cookies);
+          return responseJson.success;
+        },
+      }),
+      CredentialsProvider({
+        id: "hash-credentials",
+        credentials: {
+          hash: { label: "Hash", type: "text" },
+          fingerprint: { label: "Fingerprint", type: "text" },
+        },
+        async authorize(credentials) {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/hash-login`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                hash: credentials?.hash,
+                finger_print: credentials?.fingerprint,
+              }),
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseJson = await response.json();
+          console.log({ responseJson });
+          if (!responseJson?.success) {
+            throw new Error(
+              responseJson.message || "Invalid hash or fingerprint."
+            );
           }
           const cookies = response.headers.getSetCookie();
           res.setHeader("Set-Cookie", cookies);
@@ -44,7 +76,6 @@ const nextAuthOptions: NextAuthOptionsCallback = (req, res) => {
     secret: process.env.SECRET,
     pages: {
       signIn: "/login",
-      error: "/login",
     },
     callbacks: {
       async session() {
